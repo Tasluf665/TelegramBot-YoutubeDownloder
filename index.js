@@ -8,20 +8,21 @@ const token = process.env.TELEGRAM_BOT_TOKEN;
 const bot = new TelegramBot(token, { polling: true });
 
 const getVideoUrl = async (url, chatId) => {
-  let message = "";
   try {
     const info = await ytdl.getInfo(url);
-    info.formats.forEach((format) => {
-      if (format.hasAudio && format.mimeType.split(";")[0] === "video/mp4") {
-        message += `Quality: ${format.qualityLabel}\nURL: ${format.url}\n\n`;
-      }
-    });
 
-    await bot.sendMessage(chatId, message).catch((error) => {
-      console.log(
-        "🚀 ~ file: index.js ~ line 21 ~ awaitbot.sendMessage ~ error",
-        error
-      );
+    info.formats.forEach((format) => {
+      if (
+        format.hasAudio &&
+        format.mimeType.split(";")[0] === "video/mp4" &&
+        format.qualityLabel === "720p"
+      ) {
+        bot.sendMessage(chatId, format.url).catch((error) => {
+          bot.sendMessage(chatId, format.url).catch((error) => {
+            bot.sendMessage(chatId, "Sorry error occure. Try again");
+          });
+        });
+      }
     });
   } catch (error) {
     await bot.sendMessage(chatId, "No video found. Sorry");
