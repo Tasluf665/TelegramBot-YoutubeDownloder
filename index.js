@@ -16,12 +16,15 @@ const getVideoUrl = async (url, chatId) => {
         message += `Quality: ${format.qualityLabel}\nURL: ${format.url}\n\n`;
       }
     });
-    console.log(message);
 
-    bot.sendMessage(chatId, message);
+    await bot.sendMessage(chatId, message).catch((error) => {
+      console.log(
+        "🚀 ~ file: index.js ~ line 21 ~ awaitbot.sendMessage ~ error",
+        error
+      );
+    });
   } catch (error) {
-    console.log("🚀 ~ file: index.js ~ line 34 ~ bot.on ~ error", error);
-    bot.sendMessage(chatId, "No video found. Sorry");
+    await bot.sendMessage(chatId, "No video found. Sorry");
   }
 };
 
