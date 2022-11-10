@@ -11,19 +11,49 @@ const getVideoUrl = async (url, chatId) => {
   try {
     const info = await ytdl.getInfo(url);
 
-    info.formats.forEach((format) => {
+    for (let i = 0; i < info.formats.length; i++) {
       if (
-        format.hasAudio &&
-        format.mimeType.split(";")[0] === "video/mp4" &&
-        format.qualityLabel === "720p"
+        info.formats[i].hasAudio &&
+        info.formats[i].hasVideo &&
+        info.formats[i].qualityLabel === "720p"
       ) {
-        bot.sendMessage(chatId, format.url).catch((error) => {
-          bot.sendMessage(chatId, format.url).catch((error) => {
-            bot.sendMessage(chatId, "Sorry error occure. Try again");
-          });
+        bot.sendMessage(chatId, info.formats[i].url).catch((error) => {
+          console.log(error.message);
+          process.exit(1);
         });
+        break;
+      } else if (
+        info.formats[i].hasAudio &&
+        info.formats[i].hasVideo &&
+        info.formats[i].qualityLabel === "480p"
+      ) {
+        bot.sendMessage(chatId, info.formats[i].url).catch((error) => {
+          console.log(error.message);
+          process.exit(1);
+        });
+        break;
+      } else if (
+        info.formats[i].hasAudio &&
+        info.formats[i].hasVideo &&
+        info.formats[i].qualityLabel === "360p"
+      ) {
+        bot.sendMessage(chatId, info.formats[i].url).catch((error) => {
+          console.log(error.message);
+          process.exit(1);
+        });
+        break;
+      } else if (
+        info.formats[i].hasAudio &&
+        info.formats[i].hasVideo &&
+        info.formats[i].qualityLabel === "240p"
+      ) {
+        bot.sendMessage(chatId, info.formats[i].url).catch((error) => {
+          console.log(error.message);
+          process.exit(1);
+        });
+        break;
       }
-    });
+    }
   } catch (error) {
     await bot.sendMessage(chatId, "No video found. Sorry");
   }
@@ -39,6 +69,7 @@ bot.on("message", (msg) => {
   }
 });
 
-app.listen(3000, () => {
-  console.log("Server is running on http://localhost:3000");
+const port = process.env.PORT || 3008;
+app.listen(port, () => {
+  console.log(`Listening on port ${port}...`);
 });
